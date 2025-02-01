@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/pokemon.dart';
+import 'package:pokemon/models/pokemon.dart';
 
 class PokemonService {
   static Future<List<Pokemon>> fetchPokemon() async {
