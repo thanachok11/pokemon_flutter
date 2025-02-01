@@ -9,21 +9,40 @@ class PokemonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12), // Set the border radius
+        side: const BorderSide(
+            color: Colors.orangeAccent,
+            width: 2), // Set the border color and width
+      ),
+      elevation: 8, // Increased elevation for better shadow effect
+      margin: const EdgeInsets.symmetric(
+          vertical: 8), // Add margin for spacing between cards
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment:
+            CrossAxisAlignment.center, // Ensure text is centered
         children: [
-          Image.network(
-            pokemon.imageUrl,
-            width: 80, // ปรับขนาดให้พอดี
-            height: 80,
-            fit: BoxFit.cover,
+          // Pokémon image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              pokemon.imageUrl,
+              width: 100, // Slightly bigger image
+              height: 100,
+              fit: BoxFit
+                  .contain, // Ensures the whole image fits within the bounds
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 8), // Spacing between image and name
+          // Pokémon name
           Text(
             pokemon.name,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87, // A dark color for better contrast
+            ),
             textAlign: TextAlign.center,
           ),
         ],

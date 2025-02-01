@@ -3,27 +3,46 @@ import 'package:http/http.dart' as http;
 import '../models/pokemon.dart';
 
 class PokemonService {
-  static Future<List<Pokemon>> fetchPokemon() async {
-    final response =
-        await http.get(Uri.parse("https://pokeapi.co/api/v2/pokemon?limit=20"));
+  static Future<Map<String, dynamic>> fetchPokemon(
+      [String url =
+          'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0']) async {
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final List results = data['results'];
+      final data = json.decode(response.body);
 
       List<Pokemon> pokemonList = [];
-
-      for (var item in results) {
-        final pokemonResponse = await http.get(Uri.parse(item['url']));
-        if (pokemonResponse.statusCode == 200) {
-          final pokemonData = jsonDecode(pokemonResponse.body);
-          pokemonList.add(Pokemon.fromJson(pokemonData));
+      for (var item in data['results']) {
+        final pokemon = await fetchPokemonDetail(item['url']);
+        if (pokemon != null) {
+          pokemonList.add(pokemon);
         }
       }
 
-      return pokemonList;
+      return {
+        'pokemonList': pokemonList,
+        'nextUrl': data['next'], // URL for the next page
+      };
     } else {
-      throw Exception("Failed to load Pokémon");
+      throw Exception('Failed to load Pokémon');
     }
+  }
+
+  static Future<Pokemon?> fetchPokemonDetail(String url) async {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      // Fetch artwork URL from sprites
+      String artworkUrl =
+          data['sprites']['other']['official-artwork']['front_default'];
+
+      return Pokemon.fromJson({
+        ...data,
+        'artworkUrl': artworkUrl,
+      });
+    }
+    return null;
   }
 }
